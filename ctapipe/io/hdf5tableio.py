@@ -46,6 +46,8 @@ DEFAULT_FILTERS = tables.Filters(
     fletcher32=True,  # add checksums to data chunks
 )
 
+ALLOWED_SUFFIXES = {"DESC", "TRANSFORM", "UNIT", "TIME_SCALE", "TRANSFORM_SCALE"}
+
 
 def get_hdf5_attr(attrs, name, default=None):
     if name in attrs:
@@ -467,8 +469,10 @@ class HDF5TableReader(TableReader):
         """identifies which columns in the table to read into the containers,
         by comparing their names including an optional prefix."""
         tab = self._tables[table_name]
+        table_meta = tab.attrs._f_list()
         self._cols_to_read[table_name] = []
         self._missing_cols[table_name] = []
+        self._meta[table_name] = {}
         for container, prefix in zip(containers, prefixes):
             self._missing_cols[table_name].append([])
 
@@ -505,9 +509,20 @@ class HDF5TableReader(TableReader):
                     )
 
             # store the meta
-            self._meta[table_name] = {}
-            for key in tab.attrs._f_list():
-                self._meta[table_name][key] = tab.attrs[key]
+            self._meta[table_name][container.__name__] = {}
+            for key in container.fields:
+                for suffix in ALLOWED_SUFFIXES:
+                    colname = f"{key}_{suffix}"
+                    if prefix:
+                        colname = f"{prefix}_{colname}"
+                    if colname in table_meta:
+                        self._meta[table_name][container.__name__][colname] = tab.attrs[
+                            colname
+                        ]
+                        table_meta.remove(colname)
+
+        for key in table_meta:
+            self._meta[table_name][key] = tab.attrs[key]
 
         # check if the table has additional columns not present in any container
         for colname in tab.colnames:
@@ -542,9 +557,6 @@ class HDF5TableReader(TableReader):
         ignore_columns = set(ignore_columns) if ignore_columns is not None else set()
 
         return_iterable = True
-
-        if isinstance(containers, Container):
-            raise TypeError("Expected container *classes*, not *instances*")
 
         # check for a single container
         if isinstance(containers, type):
@@ -599,7 +611,8 @@ class HDF5TableReader(TableReader):
                     kwargs[fieldname] = None
 
                 container = cls(**kwargs)
-                container.meta = self._meta[table_name]
+                container.meta = self._meta[table_name][container.__class__.__name__]
+                container.meta.update(self._meta[table_name])
                 ret.append(container)
 
             if return_iterable:

@@ -119,6 +119,14 @@ def test_read_multiple_containers(tmp_path):
         )
         hillas_, leakage_ = next(generator)
 
+        # test that the correct meta keys are present
+        assert "leakage_intensity_width_1_DESC" in leakage_.meta.keys()
+        assert "hillas_length_DESC" in hillas_.meta.keys()
+
+        # test that the wrong meta keys are NOT present
+        assert "leakage_intensity_width_1_DESC" not in hillas_.meta.keys()
+        assert "hillas_length_DESC" not in leakage_.meta.keys()
+
     for value, read_value in zip(
         leakage_container.as_dict().values(), leakage_.as_dict().values()
     ):
