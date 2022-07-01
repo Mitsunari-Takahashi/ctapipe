@@ -11,17 +11,25 @@ from astropy import units as u
 from ctapipe.image import hillas_parameters
 from ctapipe.image import tailcuts_clean
 from ctapipe.image import toymodel
-from ctapipe.instrument import CameraGeometry
+from ctapipe.instrument import SubarrayDescription, CameraGeometry
 from ctapipe.visualization import CameraDisplay
 
 
 def draw_several_cams(geom, ncams=4):
 
-    cmaps = ["jet", "afmhot", "terrain", "autumn"]
-    fig, axs = plt.subplots(1, ncams, figsize=(15, 4),)
+    cmaps = ["inferno", "viridis", "terrain", "autumn"]
+    fig, axs = plt.subplots(
+        1,
+        ncams,
+        figsize=(15, 4),
+    )
 
     for ii in range(ncams):
-        disp = CameraDisplay(geom, ax=axs[ii], title="CT{}".format(ii + 1),)
+        disp = CameraDisplay(
+            geom,
+            ax=axs[ii],
+            title="CT{}".format(ii + 1),
+        )
         disp.cmap = cmaps[ii]
 
         model = toymodel.Gaussian(
@@ -32,7 +40,11 @@ def draw_several_cams(geom, ncams=4):
             psi=ii * 20 * u.deg,
         )
 
-        image, _, _ = model.generate_image(geom, intensity=1500, nsb_level_pe=5,)
+        image, _, _ = model.generate_image(
+            geom,
+            intensity=1500,
+            nsb_level_pe=5,
+        )
 
         mask = tailcuts_clean(
             geom,
@@ -53,8 +65,9 @@ def draw_several_cams(geom, ncams=4):
 
 
 if __name__ == "__main__":
+    subarray = SubarrayDescription.read("dataset://gamma_prod5.simtel.zst")
 
-    hexgeom = CameraGeometry.from_name("LSTCam")
+    hexgeom = subarray.tel[1].camera.geometry
     recgeom = CameraGeometry.make_rectangular()
 
     draw_several_cams(recgeom)

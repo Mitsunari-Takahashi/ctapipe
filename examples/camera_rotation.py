@@ -4,10 +4,12 @@ from matplotlib import pyplot as plt
 
 from ctapipe.instrument import CameraGeometry
 from ctapipe.visualization import CameraDisplay
+from ctapipe.utils import get_dataset_path
 
 if __name__ == "__main__":
 
-    geom = CameraGeometry.from_name("Whipple109")
+    path = get_dataset_path("Whipple109.camgeom.fits.gz")
+    geom = CameraGeometry.from_table(path)
     image = np.random.uniform(size=geom.pix_id.shape)
 
     plt.figure(figsize=(10, 4))
