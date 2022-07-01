@@ -3,11 +3,10 @@ from numpy.testing import assert_allclose
 from ctapipe.instrument import CameraGeometry
 
 
-def test_number_of_islands():
+def test_number_of_islands(prod3_lst):
     from ctapipe.image import number_of_islands
 
-    # test with LST geometry (1855 pixels)
-    geom = CameraGeometry.from_name("LSTCam")
+    geom = prod3_lst.camera.geometry
 
     # create 18 triggered pixels grouped to 5 clusters
     mask = np.zeros(geom.n_pixels).astype("bool")

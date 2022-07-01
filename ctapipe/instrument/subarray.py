@@ -238,7 +238,7 @@ class SubarrayDescription:
             which table to generate (subarray or optics)
         """
 
-        if kind == 'joined':
+        if kind == "joined":
             table = self.to_table()
             optics = self.to_table(kind="optics")
             optics["optics_index"] = np.arange(len(optics))
@@ -252,9 +252,8 @@ class SubarrayDescription:
             )
 
             table.remove_columns(["optics_index", "camera_index"])
-            table.add_index('tel_id')
+            table.add_index("tel_id")
             return table
-
 
         meta = {
             "ORIGIN": "ctapipe.instrument.SubarrayDescription",
@@ -603,3 +602,19 @@ class SubarrayDescription:
             },
             tel_descriptions=telescope_descriptions,
         )
+
+    @staticmethod
+    def read(path, **kwargs):
+        """Read subarray from path
+
+        This uses the `~ctapipe.io.EventSource` mechanism, so it should be
+        able to read a subarray from any file supported by ctapipe or an
+        installed io plugin.
+
+        kwargs are passed to the event source
+        """
+        # here to prevent circular import
+        from ..io import EventSource
+
+        with EventSource(path, **kwargs) as s:
+            return s.subarray

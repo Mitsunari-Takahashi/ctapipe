@@ -21,7 +21,6 @@ from .image_conversion import (
     get_orthogonal_grid_edges,
     get_orthogonal_grid_indices,
 )
-from ctapipe.utils import get_table_dataset
 from ctapipe.utils.linalg import rotation_matrix_2d
 from enum import Enum, unique
 
@@ -548,38 +547,6 @@ class CameraGeometry:
         image_flat[:] = image_2d[:, rows, cols]
         image_1d = image_flat
         return np.squeeze(image_1d)
-
-    @classmethod
-    def from_name(cls, camera_name="NectarCam", version=None):
-        """
-        Construct a CameraGeometry using the name of the camera and array.
-
-        This expects that there is a resource accessible via
-        `~ctapipe.utils.get_table_dataset` called ``"[array]-[camera].camgeom.fits.gz"``
-        or ``"[array]-[camera]-[version].camgeom.fits.gz"``
-
-        Parameters
-        ----------
-        camera_name: str
-            Camera name (e.g. NectarCam, LSTCam, ...)
-        version:
-            camera version id (currently unused)
-
-        Returns
-        -------
-        new CameraGeometry
-        """
-
-        if version is None:
-            verstr = ""
-        else:
-            verstr = f"-{version:03d}"
-
-        tabname = "{camera_name}{verstr}.camgeom".format(
-            camera_name=camera_name, verstr=verstr
-        )
-        table = get_table_dataset(tabname, role="dl0.tel.svc.camera")
-        return CameraGeometry.from_table(table)
 
     def to_table(self):
         """convert this to an `astropy.table.Table`"""

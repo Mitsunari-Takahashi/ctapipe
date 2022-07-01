@@ -3,19 +3,19 @@ import numpy as np
 from numpy.testing import assert_array_equal
 import astropy.units as u
 from traitlets.config import Config
-from ctapipe.instrument import SubarrayDescription, TelescopeDescription
+from ctapipe.instrument import SubarrayDescription
 from ctapipe.image.reducer import NullDataVolumeReducer, TailCutsDataVolumeReducer
 
 
 @pytest.fixture(scope="module")
-def subarray_lst():
+def subarray_lst(prod3_lst):
     telid = 1
     subarray = SubarrayDescription(
         "test array lst",
         tel_positions={1: np.zeros(3) * u.m, 2: np.ones(3) * u.m},
         tel_descriptions={
-            1: TelescopeDescription.from_name(optics_name="LST", camera_name="LSTCam"),
-            2: TelescopeDescription.from_name(optics_name="LST", camera_name="LSTCam"),
+            1: prod3_lst,
+            2: prod3_lst,
         },
     )
 

@@ -7,7 +7,6 @@ import logging
 import numpy as np
 from astropy import units as u
 from astropy.table import Table
-from ctapipe.utils import get_table_dataset
 
 
 __all__ = ["CameraReadout"]
@@ -86,39 +85,6 @@ class CameraReadout:
         pulse_max_sample = n_samples * sample_width_ns
         sample_time = np.arange(0, pulse_max_sample, sample_width_ns)
         return u.Quantity(sample_time, u.ns)
-
-    @classmethod
-    def from_name(cls, camera_name="NectarCam", version=None):
-        """Construct a CameraReadout using the name of the camera and array.
-
-        This expects that there is a resource accessible ``ctapipe_resources``
-        via `~ctapipe.utils.get_table_dataset` called
-        ``"[array]-[camera].camreadout.fits.gz"`` or
-        ``"[array]-[camera]-[version].camgeom.fits.gz"``.
-
-        Parameters
-        ----------
-        camera_name: str
-             Camera name (e.g. NectarCam, LSTCam, ...)
-        version:
-           camera version id (currently unused)
-
-        Returns
-        -------
-        new CameraReadout
-
-        """
-
-        if version is None:
-            verstr = ""
-        else:
-            verstr = f"-{version:03d}"
-
-        tabname = "{camera_name}{verstr}.camreadout".format(
-            camera_name=camera_name, verstr=verstr
-        )
-        table = get_table_dataset(tabname, role="dl0.tel.svc.camera")
-        return CameraReadout.from_table(table)
 
     def to_table(self):
         """Convert this to an `astropy.table.Table`."""

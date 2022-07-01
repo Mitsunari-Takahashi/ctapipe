@@ -1,14 +1,13 @@
 import pytest
-from ctapipe.instrument import SubarrayDescription, TelescopeDescription
+from ctapipe.instrument import SubarrayDescription
 import astropy.units as u
 from ctapipe.utils import get_dataset_path
 
 
 @pytest.fixture(scope="module")
-def subarray():
+def subarray(prod5_lst):
 
-    lst = TelescopeDescription.from_name("LST", "LSTCam")
-    tels = [lst] * 4
+    tels = [prod5_lst] * 4
 
     positions = {
         1: [0, 0, 0] * u.m,

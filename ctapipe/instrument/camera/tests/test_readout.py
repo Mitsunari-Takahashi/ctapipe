@@ -6,7 +6,7 @@ import pytest
 
 
 def test_construct():
-    """ Check we can make a CameraReadout from scratch """
+    """Check we can make a CameraReadout from scratch"""
     camera_name = "Unknown"
     sampling_rate = u.Quantity(2, u.GHz)
     reference_pulse_shape = np.ones((2, 20)).astype(np.float64)
@@ -44,7 +44,7 @@ def test_reference_pulse_sample_time(readout):
 
 
 def test_to_and_from_table(readout):
-    """ Check converting to and from an astropy Table """
+    """Check converting to and from an astropy Table"""
     tab = readout.to_table()
     readout2 = readout.from_table(tab)
 
@@ -55,7 +55,7 @@ def test_to_and_from_table(readout):
 
 
 def test_write_read(tmpdir, readout):
-    """ Check that serialization to disk doesn't lose info """
+    """Check that serialization to disk doesn't lose info"""
     filename = str(tmpdir.join("testcamera.fits.gz"))
 
     readout.to_table().write(filename, overwrite=True)
@@ -68,7 +68,7 @@ def test_write_read(tmpdir, readout):
 
 
 def test_equals():
-    """ check we can use the == operator """
+    """check we can use the == operator"""
     camera_name = "Unknown"
     sampling_rate = u.Quantity(2, u.GHz)
     reference_pulse_shape = np.ones((2, 20)).astype(np.float64)
@@ -111,7 +111,7 @@ def test_equals():
 
 
 def test_hashing():
-    """" check that hashes are correctly computed """
+    """ " check that hashes are correctly computed"""
     camera_name = "Unknown"
     sampling_rate = u.Quantity(2, u.GHz)
     reference_pulse_shape = np.ones((2, 20)).astype(np.float64)
@@ -138,15 +138,3 @@ def test_hashing():
     )
 
     assert len({readout1, readout2, readout3}) == 2
-
-
-def test_camera_from_name(camera_geometry):
-    """ check we can construct all cameras from name"""
-
-    try:
-        camera = CameraReadout.from_name(camera_geometry.camera_name)
-        assert str(camera) == camera_geometry.camera_name
-    except FileNotFoundError:
-        # Most non-cta cameras don't have readout provided on the data server
-        if camera_geometry.camera_name in ["LSTCam", "NectarCam", "FlashCam", "CHEC"]:
-            raise
