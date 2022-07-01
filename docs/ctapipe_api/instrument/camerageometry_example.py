@@ -1,7 +1,8 @@
-from ctapipe.instrument import CameraGeometry
+from ctapipe.instrument import SubarrayDescription
 from matplotlib import pyplot as plt
 
-geom = CameraGeometry.from_name("LSTCam")
+subarray = SubarrayDescription.read("dataset://gamma_prod5.simtel.zst")
+geom = subarray.tel[1].camera.geometry
 
 plt.figure(figsize=(8, 3))
 plt.subplot(1, 2, 1)
