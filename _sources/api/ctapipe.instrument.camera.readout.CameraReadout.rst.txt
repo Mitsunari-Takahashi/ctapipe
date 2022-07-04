@@ -1,0 +1,23 @@
+CameraReadout
+=============
+
+.. currentmodule:: ctapipe.instrument.camera.readout
+
+.. autoclass:: CameraReadout
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~CameraReadout.camera_name
+      ~CameraReadout.reference_pulse_sample_width
+      ~CameraReadout.reference_pulse_shape
+      ~CameraReadout.sampling_rate
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: camera_name
+   .. autoattribute:: reference_pulse_sample_width
+   .. autoattribute:: reference_pulse_shape
+   .. autoattribute:: sampling_rate
